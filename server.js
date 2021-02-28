@@ -1,27 +1,29 @@
-//dependencies
+//dependencies 
 const express = require("express");
+const morgan = require("morgan");
 const mongoose = require("mongoose");
 
-//set port so it can be accessed by heroku
-var PORT = process.env.PORT || 8080;
-var db = require("./Models");
+//set port for heroku usage
+const app = express();
+const PORT = process.env.PORT || 8080;
 
-var app = express();
-app.use(express.urlencoded({ extended: true }));
+app.use(morgan("dev"));
+
+app.use(express.urlencoded({extended:true}));
 app.use(express.json());
-app.use(express.static("public"));
+app.use(express.static('public'));
 
-//API routes 
-require("./routes/html-routes.js")(app);
-require("./routes/api-routes.js")(app);
+var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/workout";
+mongoose.connect(MONGODB_URI,{  
+    useNewUrlParser:true,
+    useFindAndModify:false
+})
 
-//connect to mongoose 
-mongoose.connect(
-  process.env.MONGODB_URI || "mongodb://localhost/custommethoddb",
-  { useNewUrlParser: true }
-);
+//API routes
+require("./routes/apiRoutes")(app);
+require("./routes/htmlRoutes")(app);
 
-//run app
-app.listen(PORT, () => {
-  console.log(`App running on port ${PORT}!`);
+//port functionality check 
+app.listen(PORT,function(){ 
+    console.log(`App listening on Port ${PORT}`);
 });
