@@ -13,17 +13,22 @@ app.use(express.urlencoded({extended:true}));
 app.use(express.json());
 app.use(express.static('public'));
 
-var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/workout";
-mongoose.connect(MONGODB_URI,{  
-    useNewUrlParser:true,
-    useFindAndModify:false
-})
+mongoose.connect(
+    process.env.MONGODB_URI || 'mongodb://localhost/Workout',
+    {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      useCreateIndex: true,
+      useFindAndModify: false
+    }
+  );  
 
 //API routes
-require("./routes/apiRoutes")(app);
-require("./routes/htmlRoutes")(app);
+require("routes/apiRoutes.js")(app);
+require("routes/htmlRoutes.js")(app);
 
 //port functionality check 
 app.listen(PORT,function(){ 
     console.log(`App listening on Port ${PORT}`);
 });
+
